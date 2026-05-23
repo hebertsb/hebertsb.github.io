@@ -459,15 +459,30 @@
                 })
                 .then(data => {
                     window.reposLoaded = true;
-                    status.textContent = 'Se encontraron ' + data.length + ' repositorios públicos actualizados';
                     
-                    if (data.length === 0) {
-                        grid.innerHTML = '<div class="repo-loading">No se encontraron repositorios públicos.</div>';
+                    // Filtrar para ignorar el repositorio del portfolio y el del perfil
+                    const filteredData = data.filter(repo => {
+                        const nameLower = repo.name.toLowerCase();
+                        return nameLower !== 'hebertsb.github.io' && nameLower !== 'hebertsb';
+                    });
+                    
+                    status.textContent = 'Se encontraron ' + filteredData.length + ' repositorios públicos actualizados';
+                    
+                    if (filteredData.length === 0) {
+                        grid.innerHTML = 
+                            '<div class="repo-loading" style="flex-direction: column; gap: 0.5rem; text-align: center; width: 100%; padding: 3rem 1rem;">' +
+                                '<span style="font-size: 2rem;">📂</span>' +
+                                '<strong>¡Listo para tus proyectos públicos!</strong>' +
+                                '<span style="font-size: 0.78rem; color: var(--muted); max-width: 450px; margin-top: 0.2rem; line-height: 1.5;">' +
+                                    'Los repositorios del portfolio y de tu biografía se ocultan automáticamente. ' +
+                                    'Agrega nuevos repositorios públicos en tu GitHub para que aparezcan aquí en tiempo real.' +
+                                '</span>' +
+                            '</div>';
                         return;
                     }
                     
                     grid.innerHTML = '';
-                    data.forEach(repo => {
+                    filteredData.forEach(repo => {
                         let langColor = '#3b82f6';
                         if (repo.language === 'JavaScript') langColor = '#f1e05a';
                         else if (repo.language === 'TypeScript') langColor = '#3178c6';
